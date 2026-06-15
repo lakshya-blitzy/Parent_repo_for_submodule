@@ -1,0 +1,6 @@
+[submodule "Parent_repo_for_submodule"]
+	path = Parent_repo_for_submodule
+	url = https://github.com/lakshya-blitzy/submodule_for_Parent_repo_for_submodule-Public.git
+[submodule "submodule_for_Parent_repo_for_submodule-Public"]
+	path = submodule_for_Parent_repo_for_submodule-Public
+	url = https://github.com/lakshya-blitzy/submodule_for_Parent_repo_for_submodule-Public.git
