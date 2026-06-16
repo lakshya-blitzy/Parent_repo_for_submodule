@@ -1,6 +1,6 @@
 # API Reference — checksort
 
-`checksort` checks whether a JavaScript `Array` is `sorted` and returns a `boolean`. It is the sole export of the package. `Source: index.js:5`
+`checksort` checks whether a JavaScript `Array` is `sorted` and returns a `boolean`. It is the sole export of the package. `Source: index.js:5,9-13`
 
 ## Signature
 
@@ -71,22 +71,22 @@ With `esModuleInterop` enabled in `tsconfig.json`, you may instead write `import
 
 ## Behavior
 
-| Array | Comparator | Expected |
-|---|---|---|
-| `[]` | default | `true` |
-| `[1]` | default | `true` |
-| `[5]` | default | `true` |
-| `[1, 5]` | default | `true` |
-| `[1, 2, 3, 4, 5]` | default | `true` |
-| `[1, 1, 3, 4, 5]` | default | `true` |
-| `[1, 1.5, 3, 4, 5]` | default | `true` |
-| `[1, 2, 3, 4, 6]` | default | `true` |
-| `[5, 4, 3, 1, 1]` | descending | `true` |
-| `[5, 4, 3, 2, 1]` | descending | `true` |
-| `[1, 5, 2, 3, 4]` | default | `false` |
-| `[5, 4, 3, 1, 2]` | descending | `false` |
+| Array | Comparator | Expected | Fixture |
+|---|---|---|---|
+| `[]` | default | `true` | `Source: test/fixtures.json:3-4` |
+| `[1]` | default | `true` | `Source: test/fixtures.json:7-8` |
+| `[5]` | default | `true` | `Source: test/fixtures.json:11-12` |
+| `[1, 5]` | default | `true` | `Source: test/fixtures.json:15-16` |
+| `[1, 2, 3, 4, 5]` | default | `true` | `Source: test/fixtures.json:19-20` |
+| `[1, 1, 3, 4, 5]` | default | `true` | `Source: test/fixtures.json:23-24` |
+| `[1, 1.5, 3, 4, 5]` | default | `true` | `Source: test/fixtures.json:27-28` |
+| `[1, 2, 3, 4, 6]` | default | `true` | `Source: test/fixtures.json:31-32` |
+| `[5, 4, 3, 1, 1]` | descending | `true` | `Source: test/fixtures.json:35-37` |
+| `[5, 4, 3, 2, 1]` | descending | `true` | `Source: test/fixtures.json:40-42` |
+| `[1, 5, 2, 3, 4]` | default | `false` | `Source: test/fixtures.json:45-46` |
+| `[5, 4, 3, 1, 2]` | descending | `false` | `Source: test/fixtures.json:49-51` |
 
-`default` is the built-in `a - b` comparator; `descending` is `(a, b) => b - a`. `Source: test/fixtures.json`
+`default` is the built-in `a - b` comparator (`Source: index.js:1-3,7`); `descending` is `(a, b) => b - a` (`Source: test/index.js:5`).
 
 ## How it works
 
@@ -108,6 +108,8 @@ module.exports = function checksort (array, comparator) {
   return true
 }
 ```
+
+`Source: index.js:1-14`
 
 - **Input guard** — non-array input throws `TypeError: Expected Array, got <type>`. `Source: index.js:6`
 - **Comparator defaulting** — when no `comparator` is passed, `defaultComparator` (`a - b`) is used. `Source: index.js:7`
@@ -135,9 +137,11 @@ flowchart TD
     J -- No --> K["return true"]
 ```
 
+`Source: index.js:5-13`
+
 ## Examples
 
-**Default ascending** — `Source: index.js:7`, `Source: test/fixtures.json`
+**Default ascending** — `Source: index.js:7`, `Source: test/fixtures.json:19-20,45-46`
 
 ```javascript
 const sorted = require('is-sorted')
@@ -146,7 +150,7 @@ sorted([1, 2, 3, 4, 5])  // => true
 sorted([1, 5, 2, 3, 4])  // => false
 ```
 
-**Custom comparator (descending)** — `Source: index.js:10`, `Source: test/index.js:5`
+**Custom comparator (descending)** — `Source: index.js:10`, `Source: test/index.js:5`, `Source: test/fixtures.json:40-42`
 
 ```javascript
 const sorted = require('is-sorted')
