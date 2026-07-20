@@ -13,6 +13,6 @@
  * @throws {@link TypeError} If `array` is not an Array
  *   (`'Expected Array, got ' + typeof array`). (Source: index.js checksort())
  */
-declare function checksort<T = any> (array: T[], comparator?: (a: T, b: T) => number)
+declare function checksort<T = any> (array: T[], comparator?: (a: T, b: T) => number): boolean
 
 export = checksort
