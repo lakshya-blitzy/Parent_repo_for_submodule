@@ -11,7 +11,7 @@
  *   `a` precedes `b`, a positive number if `a` follows `b`, or `0` when in order.
  * @returns `true` when every adjacent pair is in order, otherwise `false`.
  * @throws {@link TypeError} If `array` is not an Array
- *   (`'Expected Array, got ' + typeof array`). (Source: index.js:L6)
+ *   (`'Expected Array, got ' + typeof array`). (Source: index.js checksort())
  */
 declare function checksort<T = any> (array: T[], comparator?: (a: T, b: T) => number)
 
