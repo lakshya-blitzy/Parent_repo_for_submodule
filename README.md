@@ -175,6 +175,14 @@ The declared signature is generic over the element type (Source: index.d.ts:L28)
 declare function checksort<T = any> (array: T[], comparator?: (a: T, b: T) => number)
 ```
 
+The declaration intentionally carries **no explicit return-type annotation**, so
+its statically inferred return type is `any`, even though the runtime value is
+always a `boolean` (Source: index.d.ts:L15-L17). Consuming the declaration under
+strict TypeScript settings (for example `noImplicitAny` with declaration
+checking) may therefore surface a `TS7010` implicit-`any` diagnostic; this
+reflects the unchanged, comments-only declaration and does not affect the runtime
+result.
+
 ## How It Works
 
 `checksort` is a single-pass sortedness check. Step by step (Source:
@@ -297,11 +305,12 @@ Both jobs must pass before a release is cut.
 
 ## Contributing
 
-Clone the **submodule-composed repository** (the one that declares the submodules
-in `.gitmodules`) with its submodules, then install dependencies. The canonical
-npm package is published from <https://github.com/dcousens/is-sorted>
-(Source: package.json:L11-L14), while the repository that composes the submodules
-is `lakshya-blitzy/Parent_repo_for_submodule` (Source: .gitmodules:L1-L6):
+Clone the **submodule-composed repository** — the one that declares the two
+submodule mount points in `.gitmodules` (Source: .gitmodules:L1-L6) — with its
+submodules, then install dependencies. The canonical npm package is published from
+<https://github.com/dcousens/is-sorted> (Source: package.json:L11-L14); the
+submodule-composed repository is hosted separately at
+`lakshya-blitzy/Parent_repo_for_submodule` and is cloned with the command below:
 
 ```bash
 git clone --recurse-submodules https://github.com/lakshya-blitzy/Parent_repo_for_submodule.git is-sorted
