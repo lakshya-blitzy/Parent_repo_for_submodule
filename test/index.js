@@ -30,7 +30,7 @@ for (const f of fixtures) {
 }
 
 // Input-validation contract: non-Array input throws a TypeError whose message
-// matches /Expected Array, got string/ (Source: index.js:L6; test/index.js:L21).
+// matches /Expected Array, got string/ (Source: index.js:L52; test/index.js:L34-L39).
 tape('throws on non-Array inputs', function (t) {
   t.plan(1)
   t.throws(function () {
