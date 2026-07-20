@@ -28,12 +28,21 @@ Install from the npm registry:
 npm install is-sorted
 ```
 
-**Prerequisites:** Node.js `>= 14` is recommended — the continuous-integration
-matrix exercises the package on Node `14.x`, `16.x`, and `18.x`
+**Prerequisites:** Node.js `>= 14` is the supported floor, and the package runs
+on any modern Node.js release. The continuous-integration matrix exercises the
+package on Node `14.x`, `16.x`, and `18.x`
 (Source: .github/workflows/tests.yml:L16). No `engines` field is declared, so
 the version is a recommendation rather than an enforced constraint
 (Source: package.json). The package has **zero runtime dependencies**
 (Source: package.json).
+
+> **Security note:** the historical CI-matrix versions (`14.x`, `16.x`, `18.x`)
+> are **end-of-life** and no longer receive security updates. For production use,
+> run a currently-supported Node.js LTS release — Node `22` or `24` as of July
+> 2026 — and consult the official
+> [Node.js release schedule](https://nodejs.org/en/about/previous-releases) for
+> the authoritative, always-current list. Because `>= 14` is only a floor, those
+> supported LTS lines are already covered.
 
 ## Usage
 
@@ -170,6 +179,29 @@ as authored. `index.js` is the package entry point (`main`) and `index.d.ts`
 ships the TypeScript type declarations (`types`)
 (Source: package.json:L5-L6).
 
+### Package contents
+
+⚠️ **Before a real release, add a publish allowlist.** `package.json` declares
+**no `files` field** and the repository has **no `.npmignore`**
+(Source: package.json). As a result, `npm publish` (and `npm pack`) currently
+bundle **every tracked file** in the working tree — including the two vendored
+Git-submodule template trees, the `test/` fixtures, the `.github/` workflow, and
+`.gitmodules` (Source: .gitmodules). On the current tree `npm pack --dry-run`
+reports **641 entries** (~400 KB unpacked), the vast majority of which are
+unintended submodule template files rather than the shipped module.
+
+To publish only the intended artifacts, add an npm allowlist before the next
+release — either a `files` field in `package.json`:
+
+``` json
+"files": ["index.js", "index.d.ts"]
+```
+
+or an equivalent root `.npmignore`. npm always additionally includes
+`package.json`, `README.md`, and `LICENSE`, so the resulting tarball ships
+exactly **five files** — `index.js`, `index.d.ts`, `package.json`, `README.md`,
+and `LICENSE` — instead of 641. (Verify with `npm pack --dry-run`.)
+
 Releases are cut **manually** with `npm publish`. There is no release or publish
 automation: the CI workflow only runs the test matrix and the linter on pushes
 to `main` and on pull requests (Source: .github/workflows/tests.yml:L1-L36).
@@ -177,8 +209,9 @@ to `main` and on pull requests (Source: .github/workflows/tests.yml:L1-L36).
 Recommended pre-publish checklist:
 
 ``` bash
-npm test          # all assertions pass
-npm run standard  # lint is clean
+npm test           # all assertions pass
+npm run standard   # lint is clean
+npm pack --dry-run # review the exact file list that will be published
 npm version <patch|minor|major>
 npm publish
 ```
