@@ -9,7 +9,7 @@
  * comparator defined below. A final test asserts that a non-Array input throws
  * a `TypeError` matching `/Expected Array, got string/`.
  *
- * Source: test/index.js:L1-L22, test/fixtures.json
+ * Source: test/index.js:L14-L45, test/fixtures.json
  */
 const sorted = require('../')
 const fixtures = require('./fixtures')
@@ -18,7 +18,7 @@ const comparators = {
   /**
    * Descending numeric comparator, selected by fixtures whose `comparator`
    * value is `'descending'`. It is the inverse of the package default
-   * ascending comparator (`a - b`, see index.js:L1-L3).
+   * ascending comparator (`a - b`, see index.js:L13-L15).
    *
    * @param {number} a - Left-hand (previous) element of an adjacent pair.
    * @param {number} b - Right-hand (current) element of an adjacent pair.
