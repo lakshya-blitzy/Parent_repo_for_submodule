@@ -35,12 +35,17 @@ npm install is-sorted
 
 ### Contributor setup (submodule-aware clone)
 
-This repository composes two Git submodules, so clone it **recursively** to
-populate them (clone URL from package.json:L11-L14; submodules from
-.gitmodules:L1-L6):
+The `is-sorted` **npm package** is published from its canonical repository at
+<https://github.com/dcousens/is-sorted> (Source: package.json:L11-L14), but that
+repository does **not** declare the submodules described here. The
+**submodule-composed repository** — the one that declares the two mount points in
+`.gitmodules` (Source: .gitmodules:L1-L6) — is hosted separately at
+`lakshya-blitzy/Parent_repo_for_submodule`. Clone **that** repository
+**recursively**, using `is-sorted` as the target directory, so the submodules are
+populated:
 
 ```bash
-git clone --recurse-submodules https://github.com/dcousens/is-sorted.git
+git clone --recurse-submodules https://github.com/lakshya-blitzy/Parent_repo_for_submodule.git is-sorted
 cd is-sorted
 npm install
 ```
@@ -292,11 +297,14 @@ Both jobs must pass before a release is cut.
 
 ## Contributing
 
-Clone the repository with its submodules, then install dependencies (clone URL
-from package.json:L11-L14; submodules from .gitmodules:L1-L6):
+Clone the **submodule-composed repository** (the one that declares the submodules
+in `.gitmodules`) with its submodules, then install dependencies. The canonical
+npm package is published from <https://github.com/dcousens/is-sorted>
+(Source: package.json:L11-L14), while the repository that composes the submodules
+is `lakshya-blitzy/Parent_repo_for_submodule` (Source: .gitmodules:L1-L6):
 
 ```bash
-git clone --recurse-submodules https://github.com/dcousens/is-sorted.git
+git clone --recurse-submodules https://github.com/lakshya-blitzy/Parent_repo_for_submodule.git is-sorted
 cd is-sorted
 npm install
 ```
