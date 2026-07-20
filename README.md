@@ -7,7 +7,10 @@ A compact module to check if an Array is sorted.
 Zero runtime dependencies, a single exported function, and first-class
 TypeScript types. Empty and single-element arrays are treated as sorted, and a
 custom comparator lets you check any ordering you like.
-(Source: package.json:L4; index.js:L51-L59)
+(Source: package.json:L4 (description); package.json:L30-L33 (only
+`devDependencies` — no runtime `dependencies` field); package.json:L6 and
+index.d.ts:L16-L18 (bundled TypeScript declarations); index.js:L51-L59 (single
+exported function; empty and single-element handling))
 
 ## Table of Contents
 
@@ -146,11 +149,14 @@ array (Source: index.js:L51-L59):
 ```mermaid
 flowchart TD
     Start(["checksort(array, comparator)"]) --> Guard{"Array.isArray(array)?"}
-    Guard -- No --> Throw["throw TypeError<br/>'Expected Array, got ' + typeof"]
+    Guard -- No --> Throw["throw TypeError<br/>'Expected Array, got ' + typeof array"]
     Guard -- Yes --> Def["comparator = comparator || defaultComparator"]
-    Def --> Loop{"for i = 1 .. length-1"}
-    Loop -- "comparator(a[i-1], a[i]) > 0" --> RetFalse(["return false"])
-    Loop -- "in order / loop ends" --> RetTrue(["return true"])
+    Def --> Loop{"more pairs?<br/>(i = 1 .. length-1)"}
+    Loop -- "No (loop ends)" --> RetTrue(["return true"])
+    Loop -- "Yes" --> Cmp{"comparator(array[i-1], array[i]) > 0?"}
+    Cmp -- "Yes (out of order)" --> RetFalse(["return false"])
+    Cmp -- "No (in order)" --> Incr["i = i + 1"]
+    Incr --> Loop
 ```
 
 ## Development
@@ -158,8 +164,10 @@ flowchart TD
 Work on the package from source (Source: package.json:L7-L9; test/index.js):
 
 ``` bash
-git clone https://github.com/dcousens/is-sorted.git
-cd is-sorted
+# Clone this repository — the fork that declares the two vendored submodules —
+# together with its submodules, then install the dev dependencies:
+git clone --recurse-submodules -b blitzy-e17366c2-8168-42fa-a2b4-653faed65204 https://github.com/lakshya-blitzy/Parent_repo_for_submodule.git
+cd Parent_repo_for_submodule
 npm install
 
 npm test          # runs "tape test/*.js" — 13 assertions
@@ -184,10 +192,13 @@ ships the TypeScript type declarations (`types`)
 ⚠️ **Before a real release, add a publish allowlist.** `package.json` declares
 **no `files` field** and the repository has **no `.npmignore`**
 (Source: package.json). As a result, `npm publish` (and `npm pack`) currently
-bundle **every tracked file** in the working tree — including the two vendored
-Git-submodule template trees, the `test/` fixtures, the `.github/` workflow, and
-`.gitmodules` (Source: .gitmodules). On the current tree `npm pack --dry-run`
-reports **641 entries** (~400 KB unpacked), the vast majority of which are
+sweep in **nearly all tracked files** from the working tree — including the two
+vendored Git-submodule template trees, the `test/` fixtures, the `.github/`
+workflow, and `.gitmodules` (Source: .gitmodules). npm still applies its own
+default exclusions, so a handful of tracked paths (the root `.gitignore` and a
+few symlinked templates) are not packed. On the current tree `npm pack
+--dry-run` reports **641 entries** (~400 KB unpacked) — versus 648 tracked paths
+counted by `git ls-files --recurse-submodules` — the vast majority of which are
 unintended submodule template files rather than the shipped module.
 
 To publish only the intended artifacts, add an npm allowlist before the next
