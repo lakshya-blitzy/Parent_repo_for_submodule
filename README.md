@@ -19,9 +19,9 @@ A compact module to check if an Array is sorted.
 ## Features
 
 - **Single-pass `O(n)` scan.** Sortedness is determined with one left-to-right walk over adjacent pairs — no copying, no auxiliary sort. (Source: `index.js:L9-L13`)
-- **Zero runtime dependencies.** The package declares only `devDependencies`, so nothing is pulled into your dependency tree at install time. (Source: `package.json` — only `devDependencies`)
+- **Zero runtime dependencies.** The package declares only `devDependencies`, so nothing is pulled into your dependency tree at install time. (Source: `package.json:L30-L33`)
 - **Optional custom comparator.** Pass any `(a, b) => number` callback following `Array.prototype.sort` semantics; the ascending numeric default is used when you omit it. (Source: `index.js:L7,L10`)
-- **Ships TypeScript types.** A bundled ambient declaration (`index.d.ts`) provides IDE hover docs and type checking. (Source: `package.json` `types`)
+- **Ships TypeScript types.** A bundled ambient declaration (`index.d.ts`) provides IDE hover docs and type checking. (Source: `package.json:L6`)
 - **Strict input validation.** Non-Array input throws a `TypeError` instead of silently returning a misleading result. (Source: `index.js:L6`)
 
 ## Installation
@@ -35,7 +35,7 @@ yarn add is-sorted
 ```
 
 `is-sorted` is tested against **Node.js 14.x, 16.x, and 18.x** in continuous integration. (Source: `.github/workflows/tests.yml:L16`)
-It has **zero runtime dependencies**, so installation adds nothing beyond the single module to your tree. (Source: `package.json`)
+It has **zero runtime dependencies**, so installation adds nothing beyond the single module to your tree. (Source: `package.json:L30-L33`)
 
 ## Usage
 
@@ -79,7 +79,7 @@ they are equal, and a positive number when `a` sorts after `b`. (Source: `index.
 
 `boolean` — `true` when the array is sorted, otherwise `false`. Empty arrays
 (`[]`) and single-element arrays are always considered sorted, because the scan
-never finds an out-of-order adjacent pair. (Source: `index.js:L9-L13`; fixtures: `test/fixtures.json`)
+never finds an out-of-order adjacent pair. (Source: `index.js:L9-L13`; fixtures: `test/fixtures.json:L2-L13`)
 
 **Throws**
 
@@ -96,13 +96,20 @@ checksort<T = any>(array: T[], comparator?: (a: T, b: T) => number)
 ```
 
 Because the declaration uses the CommonJS `export = checksort` form
-(Source: `index.d.ts:L3`), import it with the `import ... = require(...)` syntax,
-or with a default import when `esModuleInterop` is enabled in your `tsconfig.json`:
+(Source: `index.d.ts:L3`), import it with the `import ... = require(...)` syntax:
 
 ``` ts
 import checksort = require('is-sorted')
-// or, with esModuleInterop enabled:
+
+checksort([1, 2, 3]) // => true
+```
+
+Or, when `esModuleInterop` is enabled in your `tsconfig.json`, use a default
+import instead:
+
+``` ts
 import checksort from 'is-sorted'
+
 checksort([1, 2, 3]) // => true
 ```
 
@@ -114,12 +121,12 @@ order (Source: `index.js:L1-L3,L7`):
 ``` javascript
 const sorted = require('is-sorted')
 
-sorted([1, 2, 3])       // => true
+sorted([1, 2, 3]) // => true
 sorted([1, 5, 2, 3, 4]) // => false
 ```
 
 **2. Custom descending comparator** — supply `(a, b) => b - a` to test
-largest-first ordering (Source: `test/index.js:L5`, `test/fixtures.json` idx 9):
+largest-first ordering (Source: `test/index.js:L5`, `test/fixtures.json:L39-L43`):
 
 ``` javascript
 const sorted = require('is-sorted')
@@ -139,8 +146,10 @@ sorted('foobar')
 
 ## How It Works
 
-`checksort` is a short, allocation-free function. The annotated walkthrough below
-maps each step to its source line in `index.js`:
+`checksort` neither copies nor sorts the input array; it performs a single
+adjacent-pair pass using only constant local loop state (the index `i` and the
+cached `length`). The annotated walkthrough below maps each step to its source
+line in `index.js` (Source: `index.js:L9-L13`):
 
 1. **Input guard.** `Array.isArray(array)` is checked first; a non-Array argument
    throws `TypeError('Expected Array, got ' + (typeof array))`. (Source: `index.js:L6`)
@@ -179,9 +188,9 @@ npm test
 
 This executes `tape test/*.js` (Source: `package.json:L9`), which runs the
 **12 table-driven fixture cases** defined in `test/fixtures.json` plus a
-dedicated `throws on non-Array inputs` case. (Source: `test/index.js`, `test/fixtures.json`)
+dedicated `throws on non-Array inputs` case. (Source: `test/index.js:L8-L15,L17-L22`, `test/fixtures.json:L1-L53`)
 
-Representative fixtures (Source: `test/fixtures.json`):
+Representative fixtures (Source: `test/fixtures.json:L1-L53`):
 
 | Input                          | Comparator   | Expected |
 |--------------------------------|--------------|----------|
@@ -207,31 +216,41 @@ only and change no runtime behavior.
 
 `is-sorted` is a zero-runtime-dependency **library**, not a service, so
 "deployment" here means the **npm publishing workflow** rather than provisioning
-servers or infrastructure.
+servers or infrastructure. (Source: `package.json:L30-L33`)
 
 Publish a new release in three steps:
 
 ``` bash
-# 1. Bump the version (updates package.json and creates a git tag)
-npm version <patch|minor|major>
+# 1. Bump the version (updates package.json and creates a git tag).
+#    Substitute `minor` or `major` for `patch` as appropriate.
+npm version patch
 
-# 2. Ensure the Tests CI workflow is green
-#    (jobs: `unit` on Node 14.x/16.x/18.x + `standard` on Node 18.x)
+# 2. Run the tests and style check locally, and confirm the latest Tests
+#    workflow run is green before publishing.
 #    Source: .github/workflows/tests.yml:L9-L36
+npm test && npm run standard
 
 # 3. Publish to the npm registry
 npm publish
 ```
 
-The CI **Tests** workflow gates every release: the `unit` job runs `npm test`
-across the Node.js 14.x/16.x/18.x matrix, and the `standard` job runs
-`npm run standard` on Node 18.x. (Source: `.github/workflows/tests.yml:L9-L36`)
+The repository's CI **Tests** workflow runs on pushes to `main` and on pull
+requests (Source: `.github/workflows/tests.yml:L3-L7`); its `unit` job runs
+`npm test` across the Node.js 14.x/16.x/18.x matrix and its `standard` job runs
+`npm run standard` on Node 18.x (Source: `.github/workflows/tests.yml:L9-L36`).
+The workflow defines **no** publish or release job, so it does **not**
+automatically gate `npm publish`. Treat a green CI run as a **manual
+prerequisite**: before publishing, run `npm test` and `npm run standard`
+locally and confirm the latest Tests workflow run is green, then publish
+manually.
 
 Consumers integrate the published package via CommonJS `require`, or a default
 import in TypeScript (with `esModuleInterop` enabled):
 
 ``` javascript
 const sorted = require('is-sorted')
+
+console.log(sorted([1, 2, 3])) // => true
 ```
 
 ## Git Submodules
@@ -244,10 +263,14 @@ both pointing at the **same** upstream URL
 
 Both submodules are vendored, **CC0-1.0**-licensed clones of the
 [`github/gitignore`](https://github.com/github/gitignore) template collection
-(distinct from this package's MIT license). Each is pinned to the same commit
-(`dcc0fc7`) and contains only `.gitignore` templates (312 of them) — **no
-JavaScript or TypeScript** — so JSDoc is not applicable within them. There are
-**no nested submodules**.
+(distinct from this package's MIT license; Source: `Parent_repo_for_submodule/LICENSE:L1`).
+The two mount points are pinned **independently** by the parent repository (rather
+than to a single shared, mutable commit ID); run `git submodule status` to see the
+commit each path currently tracks (Source: `git submodule status`). Each collection contains **312 `.gitignore`
+templates** plus supporting documentation and license metadata — its own
+`README.md`, `CONTRIBUTING.md`, `Global/README.md`, `LICENSE`, and `.github/`
+files — and **no JavaScript or TypeScript**, so JSDoc is not applicable within
+them. There are **no nested submodules** (no nested `.gitmodules`).
 
 Initialize and fetch the submodule working trees with:
 
@@ -266,8 +289,8 @@ The submodule topology is summarized below:
 graph TD
     P[Parent repo: is-sorted v1.0.5] -->|submodule path 1| S1[Parent_repo_for_submodule/]
     P -->|submodule path 2| S2[submodule_for_Parent_repo_for_submodule-Public/]
-    S1 -->|same url + commit dcc0fc7| U[(github/gitignore collection — CC0, 312 templates, zero JS)]
-    S2 -->|same url + commit dcc0fc7| U
+    S1 -->|same upstream url| U[(github/gitignore fork — CC0, 312 templates plus docs/license, zero JS/TS)]
+    S2 -->|same upstream url| U
 ```
 
 ## LICENSE [MIT](LICENSE)
