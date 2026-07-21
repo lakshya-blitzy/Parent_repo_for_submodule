@@ -18,7 +18,25 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-__all__ = ["is_sorted"]
+__all__ = ["InputTypeError", "is_sorted"]
+
+
+class InputTypeError(TypeError):
+    """Domain error raised by :func:`is_sorted` when the input is not a list.
+
+    Subclasses the built-in :class:`TypeError` so the original source-level
+    contract from ``index.js`` (``throw new TypeError('Expected Array, got ' +
+    typeof array)``) is preserved exactly: any caller — and the ported unit
+    tests — that catches ``TypeError`` (e.g.
+    ``pytest.raises(TypeError, match="Expected Array, got string")``) still
+    catches this, and the message is byte-identical.
+
+    Introducing a dedicated subtype lets the Flask web layer register an error
+    handler for *only* this domain error (mapping it to HTTP 400 with its safe,
+    caller-facing message), while any unrelated or internal ``TypeError`` flows
+    to the sanitized HTTP 500 path instead of being misreported as a client
+    error or leaking implementation details.
+    """
 
 
 def _default_comparator(a: object, b: object) -> float:
@@ -60,6 +78,11 @@ def is_sorted(
     out of order (the comparator never returns a value greater than ``0``).
     Empty and single-element arrays are trivially sorted.
 
+    Raises :class:`InputTypeError` (a subclass of the built-in ``TypeError``,
+    so ``except TypeError`` still catches it) when ``array`` is not a ``list``,
+    with the message ``"Expected Array, got <type>"`` — the exact input-guard
+    contract ported from ``index.js``.
+
     Note (documented edge divergence, intentionally NOT "fixed"): under the
     default comparator with non-numeric elements, JavaScript coerces ``a - b``
     to ``NaN`` (``NaN > 0`` is false, so JS reports "sorted"), whereas Python's
@@ -68,7 +91,7 @@ def is_sorted(
     elements behave identically (``NaN > 0`` is false in both languages).
     """
     if not isinstance(array, list):
-        raise TypeError("Expected Array, got " + _js_typeof(array))
+        raise InputTypeError("Expected Array, got " + _js_typeof(array))
     comparator = comparator or _default_comparator
 
     for i in range(1, len(array)):
