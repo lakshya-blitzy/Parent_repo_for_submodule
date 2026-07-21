@@ -1,21 +1,10 @@
-# Runtime dependencies for the is-sorted Flask application.
-#
-# Target stack per the Technical Specification (Section 0.5 Dependency Inventory).
-# Fully pinned for reproducible installs. The core algorithm (app/core.py) uses
-# only the Python standard library; Flask and its transitive dependencies power
-# the HTTP/JSON delivery layer. gunicorn is the optional production WSGI server
-# referenced by wsgi.py (not required to run tests or the Flask dev server).
-
-# --- Web framework ---
+# Runtime dependencies for the is-sorted Flask API.
+# The core algorithm (app/core.py) is stdlib-only; these power the web-delivery layer.
 Flask==3.1.3
-
-# --- Flask transitive dependencies (pinned explicitly for reproducibility) ---
 Werkzeug==3.1.8
 Jinja2==3.1.6
 click==8.4.2
 itsdangerous==2.2.0
 blinker==1.9.0
 MarkupSafe==3.0.3
-
-# --- Optional production WSGI server (referenced by wsgi.py) ---
 gunicorn==26.0.0
