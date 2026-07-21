@@ -42,7 +42,7 @@ It has **zero runtime dependencies**, so installation adds nothing beyond the si
 The module exports a single function. Call it with an array to test whether the
 array is already sorted in ascending numeric order (the default), or pass a
 custom comparator to test any other ordering. The comparator follows the same
-contract as the callback given to `Array.prototype.sort`. (Source: `README.md:L7-L20`, `index.js:L5`)
+contract as the callback given to `Array.prototype.sort`. (Source: `index.js:L5`)
 
 ``` javascript
 const sorted = require('is-sorted')
