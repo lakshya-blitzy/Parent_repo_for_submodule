@@ -1,14 +1,5 @@
-# Development / test dependencies for the is-sorted Flask application.
-#
-# Installs the full runtime stack plus the developer toolchain that replaces the
-# original Node.js devDependencies (tape -> pytest, standard -> ruff), per the
-# Technical Specification (Section 0.5 Dependency Inventory).
-
-# Include the pinned runtime dependencies.
+# Development / test dependencies for is-sorted.
+# Installs runtime deps too, then adds the test runner and linter.
 -r requirements.txt
-
-# --- Test runner (replaces tape) ---
 pytest==9.1.1
-
-# --- Linter / formatter (replaces standard) ---
 ruff==0.15.22
