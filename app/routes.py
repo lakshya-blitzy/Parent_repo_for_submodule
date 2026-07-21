@@ -9,9 +9,10 @@ callables directly to :func:`app.core.is_sorted`.
 
 from __future__ import annotations
 
+from flask import Blueprint, jsonify, request
+
 from app.comparators import get_comparator
 from app.core import is_sorted
-from flask import Blueprint, jsonify, request
 
 bp = Blueprint("is_sorted", __name__)
 

@@ -17,8 +17,9 @@ preserved; only the web layer converts it to a 400.
 
 from __future__ import annotations
 
-from app.core import InputTypeError
 from flask import Flask, jsonify
+
+from app.core import InputTypeError
 
 __all__ = ["register_error_handlers"]
 
