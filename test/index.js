@@ -1,3 +1,13 @@
+/**
+ * Test suite for the `is-sorted` package, built on the `tape` framework.
+ *
+ * Fixture-driven: iterates the table-driven cases in `./fixtures.json`, maps each
+ * case's optional comparator name (e.g. `descending`) to a comparator function, calls
+ * `sorted(f.array, comparators[f.comparator])`, and asserts the result equals
+ * `f.expected` (Source: test/index.js:L8-L15). A dedicated case asserts that non-Array
+ * input throws a `TypeError` matching `/Expected Array, got string/`
+ * (Source: test/index.js:L17-L22).
+ */
 const sorted = require('../')
 const fixtures = require('./fixtures')
 const tape = require('tape')
